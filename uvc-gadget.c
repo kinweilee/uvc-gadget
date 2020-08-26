@@ -36,7 +36,7 @@
 #include <linux/usb/video.h>
 #include <linux/videodev2.h>
 
-#include "../drivers/usb/gadget/function/uvc.h"
+#include "uvc.h"
 
 /* Enable debug prints. */
 #undef ENABLE_BUFFER_DEBUG
@@ -80,7 +80,7 @@
 #define PU_BRIGHTNESS_MIN_VAL		0
 #define PU_BRIGHTNESS_MAX_VAL		255
 #define PU_BRIGHTNESS_STEP_SIZE		1
-#define PU_BRIGHTNESS_DEFAULT_VAL	127
+#define PU_BRIGHTNESS_DEFAULT_VAL	55
 
 /* ---------------------------------------------------------------------------
  * Generic stuff
@@ -754,7 +754,7 @@ uvc_video_set_format(struct uvc_device *dev)
 	fmt.fmt.pix.pixelformat = dev->fcc;
 	fmt.fmt.pix.field = V4L2_FIELD_NONE;
 	if (dev->fcc == V4L2_PIX_FMT_MJPEG)
-		fmt.fmt.pix.sizeimage = dev->imgsize * 1.5;
+		fmt.fmt.pix.sizeimage = dev->imgsize * 1.0;
 
 	ret = ioctl(dev->uvc_fd, VIDIOC_S_FMT, &fmt);
 	if (ret < 0) {
@@ -2262,7 +2262,7 @@ main(int argc, char *argv[])
 		fmt.fmt.pix.height = (default_resolution == 0) ? 360 : 720;
 		fmt.fmt.pix.sizeimage = (default_format == 0) ?
 			(fmt.fmt.pix.width * fmt.fmt.pix.height * 2) :
-			(fmt.fmt.pix.width * fmt.fmt.pix.height * 1.5);
+			(fmt.fmt.pix.width * fmt.fmt.pix.height * 1.0);
 		fmt.fmt.pix.pixelformat = (default_format == 0) ?
 			V4L2_PIX_FMT_YUYV : V4L2_PIX_FMT_JPEG;
 		fmt.fmt.pix.field = V4L2_FIELD_ANY;
@@ -2292,7 +2292,7 @@ main(int argc, char *argv[])
 	udev->height = (default_resolution == 0) ? 360 : 720;
 	udev->imgsize = (default_format == 0) ?
 			(udev->width * udev->height * 2) :
-			(udev->width * udev->height * 1.5);
+			(udev->width * udev->height * 1.0);
 	udev->fcc = (default_format == 0) ? V4L2_PIX_FMT_YUYV :
 			V4L2_PIX_FMT_JPEG;
 	udev->io = uvc_io_method;
