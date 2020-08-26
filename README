@@ -7,6 +7,30 @@ Contacts:
 Laurent Pinchart <laurent.pinchart@xxxxxxxxxxxxxxxx>
 Bhupesh Sharma <bhupesh.sharma@xxxxxx>
 
+Fork Notes
+==========
+MJPG (1280 x 720 30fps) enabled version of uvc-gadget working with macOS 10.15.
+Tested with PiZero and OV5647 camera connected to CSI-2 port.
+Connect PiZero to OTG port using a USB cable.
+
+Compiling:
+git clone git://github.com/kinweilee/uvc-gadget
+cd uvc-gadget
+make
+
+Running:
+sudo ./uvc-setup.sh start mjpg #sets configfs with only one UVC entry
+./run.sh (or ./uvc-gadget -v /dev/video0 -u /dev/video1 -n3 -f1 -r1 -s1)
+
+On Mac:
+QuickTime Player: File->New Movie Recording,
+next to the red Record button click the down arrow and select 'pizero'.
+
+FaceTime: Video->pizero
+
+NB: uvc-gadget reports that it tries to set UVC to YUYV 640x360, despite MJPG
+being requested.
+
 Introduction
 ============
 
