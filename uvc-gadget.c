@@ -2265,7 +2265,7 @@ main(int argc, char *argv[])
 			(fmt.fmt.pix.width * fmt.fmt.pix.height * 2) :
 			(fmt.fmt.pix.width * fmt.fmt.pix.height * 1.0);
 		fmt.fmt.pix.pixelformat = (default_format == 0) ?
-			V4L2_PIX_FMT_YUYV : V4L2_PIX_FMT_JPEG;
+			V4L2_PIX_FMT_YUYV : V4L2_PIX_FMT_MJPEG;
 		fmt.fmt.pix.field = V4L2_FIELD_ANY;
 
 		/* Open the V4L2 device. */
@@ -2295,7 +2295,7 @@ main(int argc, char *argv[])
 			(udev->width * udev->height * 2) :
 			(udev->width * udev->height * 1.0);
 	udev->fcc = (default_format == 0) ? V4L2_PIX_FMT_YUYV :
-			V4L2_PIX_FMT_JPEG;
+			V4L2_PIX_FMT_MJPEG;
 	udev->io = uvc_io_method;
 	udev->bulk = bulk_mode;
 	udev->nbufs = nbufs;
