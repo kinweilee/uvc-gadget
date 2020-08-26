@@ -31,6 +31,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <errno.h>
+#include <time.h>
 
 #include <linux/usb/ch9.h>
 #include <linux/usb/video.h>
@@ -2415,8 +2416,13 @@ main(int argc, char *argv[])
 		if (FD_ISSET(udev->uvc_fd, &dfds))
 			uvc_video_process(udev);
 		if (!dummy_data_gen_mode && !mjpeg_image)
+		{
 			if (FD_ISSET(vdev->v4l2_fd, &fdsv))
 				v4l2_process_data(vdev);
+			// add some delay when not streaming to reduce cpu in while loop
+			if(!vdev->is_streaming && !udev->is_streaming)
+				nanosleep((const struct timespec[]){{0, 5000000L}}, NULL);
+		}
 	}
 
 	if (!dummy_data_gen_mode && !mjpeg_image && vdev->is_streaming) {
