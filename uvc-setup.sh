@@ -71,13 +71,14 @@ create_frame() {
         #HEIGHT=360
 	echo $WIDTH > $wdir/wWidth
 	echo $HEIGHT > $wdir/wHeight
-	echo $(( $WIDTH * $HEIGHT * 1 )) > $wdir/dwMaxVideoFrameBufferSize
+	#echo $(( $WIDTH * $HEIGHT * 1 )) > $wdir/dwMaxVideoFrameBufferSize
         # each frame is 100ns
-        echo 666666 > $wdir/dwDefaultFrameInterval
+        echo 500000 > $wdir/dwDefaultFrameInterval
 	cat <<EOF > $wdir/dwFrameInterval
+166666
+200000
+333333
 500000
-1000000
-2000000
 EOF
 	echo $(( $WIDTH * $HEIGHT * 80 )) > $wdir/dwMinBitRate
 	echo $(( $WIDTH * $HEIGHT * 160 )) > $wdir/dwMaxBitRate
@@ -96,11 +97,18 @@ create_uvc() {
 	#create_frame $FUNCTION 640 360 uncompressed u
 	#create_frame $FUNCTION 736 480 uncompressed u
         case "$PLAT" in 
-          mjpg)
+          test)
+            create_frame $FUNCTION 1920 1080 mjpeg m
+            ;;
+          mjpeg)
 	    create_frame $FUNCTION 1280 720 mjpeg m
           ;;
           yuyv)
 	    create_frame $FUNCTION 1280 720 uncompressed u
+          ;;
+          all)
+	    create_frame $FUNCTION 1280 720 uncompressed u
+	    create_frame $FUNCTION 1280 720 mjpeg m
           ;;
           *)
             echo "unknown format, exiting"
@@ -149,19 +157,28 @@ delete_uvc() {
 	rm functions/$FUNCTION/control/class/*/h
 	rm functions/$FUNCTION/streaming/class/*/h
 	rm functions/$FUNCTION/streaming/header/h/m
+	rm functions/$FUNCTION/streaming/header/h/u
 	
         rmdir functions/$FUNCTION/streaming/uncompressed/u/*/
 	rmdir functions/$FUNCTION/streaming/uncompressed/u
 	
-        rm -rf functions/$FUNCTION/streaming/mjpeg/m/*/
-	rm -rf functions/$FUNCTION/streaming/mjpeg/m
+        rmdir functions/$FUNCTION/streaming/mjpeg/m/*/
+	rmdir functions/$FUNCTION/streaming/mjpeg/m
 	
         rmdir functions/$FUNCTION/streaming/header/h
 	rmdir functions/$FUNCTION/control/header/h
 	
         rmdir functions/$FUNCTION
+        rm $CONFIG/$FUNCTION
+	#rm configs/c.1/uvc.0
 }
-
+delete_ethernet(){
+	CONFIG=$1
+	FUNCTION=$2
+        echo "function/$FUNCTION"
+        rmdir functions/$FUNCTION
+        rm $CONFIG/$FUNCTION
+}
 case "$OP" in
     start)
 	echo "Creating the USB gadget"
@@ -205,7 +222,7 @@ case "$OP" in
 	echo "Creating functions..."
 	
         create_uvc configs/c.1 uvc.0
-	#create_eth configs/c.1 ecm.usb0
+	//create_eth configs/c.1 ecm.usb0
         #create_serial configs/c.1 acm.usb0
 	echo "OK"
 
@@ -236,18 +253,25 @@ case "$OP" in
 	grep $UDC UDC && echo "" > UDC
 	echo "OK"
 
-	delete_uvc configs/c.1 uvc.0
+	#delete_uvc configs/c.1 uvc.0
+        #delete_ethernet configs/c.1 ecm.usb0
 
 	echo "Clearing English strings"
 	rmdir strings/0x409
 	echo "OK"
+	
+        delete_uvc configs/c.1 uvc.0
+        delete_ethernet configs/c.1 ecm.usb0
+
 
 	echo "Cleaning up configuration"
 	rmdir configs/c.1/strings/0x409
+	#rm configs/c.1/uvc.0
 	rmdir configs/c.1
 
-        rmdir functions/uvc.0
-        rmdir string/0x409
+        rmdir functions/uvc.0 #try to put this in delete_uvc
+        rmdir functions/ecm.usb0
+        #rm string/0x409
 	echo "OK"
 
 	echo "Removing gadget directory"
