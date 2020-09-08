@@ -19,7 +19,7 @@ cd uvc-gadget
 make
 
 Running:
-sudo ./uvc-setup.sh start mjpg #sets configfs with only one UVC entry
+sudo ./uvc-setup.sh start mjpeg #sets configfs with only one UVC entry
 ./run.sh (or ./uvc-gadget -v /dev/video0 -u /dev/video1 -n3 -f1 -r1 -s1)
 
 On Mac:
